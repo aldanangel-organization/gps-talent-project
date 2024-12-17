@@ -9,5 +9,5 @@ pipeline.execute(
     appName: 'gps-talent-proyect',
     repository: 'aws_dev',
     type: 'lambda',
-    template: 'template.yaml'
+    template: 'application/template.yaml'
 )
