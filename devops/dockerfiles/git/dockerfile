@@ -1,0 +1,15 @@
+FROM alpine:3.18
+
+RUN apk add --no-cache \
+    git \
+    bash \
+    openssh-client \
+    ca-certificates
+
+# Crear usuario Jenkins
+RUN addgroup -S devops && adduser -S jenkins -G devops
+USER jenkins
+WORKDIR /home/jenkins
+
+# Definir el entrypoint (por si necesitas comandos adicionales)
+CMD ["/bin/bash"]
