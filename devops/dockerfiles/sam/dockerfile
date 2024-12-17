@@ -24,8 +24,8 @@ RUN apk update && apk add --no-cache \
     openssl-dev
 
 # Crear grupo y usuario (con Alpine `addgroup` y `adduser`)
-RUN addgroup -g 994 devops && \
-    adduser -u 1001 -G devops -h /home/jenkins -s /bin/bash -D jenkins
+RUN addgroup -g 1000 devops && \
+    adduser -u 1000 -G devops -h /home/jenkins -s /bin/bash -D jenkins
 
 # Cambiar al usuario creado
 USER jenkins
