@@ -1,16 +1,17 @@
-# Imagen base Alpine 3.16.3
-FROM alpine:3.16.3
+# Imagen base: Python 3.9 sobre Alpine
+FROM python:3.9-alpine
 
 # Configurar variables de entorno
-ENV LANG=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
-ENV PATH="/home/jenkins/.local/bin:$PATH"
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    PATH="/home/jenkins/.local/bin:$PATH"
 
-# Instalar dependencias necesarias: Python, AWS SAM CLI, etc.
-RUN apk update && apk add --no-cache \
-    python3 \
-    py3-pip \
-    shadow \
+# Definir UID y GID para Jenkins (ajustables si es necesario)
+ARG JENKINS_UID=1000
+ARG JENKINS_GID=1000
+
+# Instalar dependencias adicionales del sistema
+RUN apk add --no-cache \
     bash \
     curl \
     git \
@@ -21,26 +22,19 @@ RUN apk update && apk add --no-cache \
     gcc \
     libc-dev \
     libffi-dev \
-    openssl-dev
+    openssl-dev \
+    shadow
 
-# Crear grupo y usuario (con Alpine `addgroup` y `adduser`)
-RUN addgroup -g 1000 devops && \
-    adduser -u 1000 -G devops -h /home/jenkins -s /bin/bash -D jenkins
+# Instalar AWS CLI y AWS SAM CLI
+RUN pip install --upgrade pip && \
+    pip install awscli aws-sam-cli
 
-# Cambiar al usuario creado
-USER jenkins
+# Crear grupo y usuario configurables
+RUN addgroup -g ${JENKINS_GID} jenkins && \
+    adduser -u ${JENKINS_UID} -G jenkins -s /bin/bash -D jenkins
 
-# Directorio de trabajo
+# Configurar el directorio de trabajo
 WORKDIR /app
-
-# Instalar AWS SAM CLI
-RUN pip3 install --upgrade pip && \
-    pip3 install aws-sam-cli
-
-
-RUN mkdir -p jenkins/workspace && chown -R jenkins:devops jenkins
-WORKDIR /home/jenkins
-RUN mkdir -p .aws && chown -R jenkins:devops .
 USER jenkins
 
 # Comando predeterminado: ejecutar SAM build
