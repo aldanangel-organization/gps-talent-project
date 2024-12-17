@@ -1,0 +1,13 @@
+FROM jenkins/jenkins:lts
+
+USER root
+RUN apt-get update && apt-get install -y \
+    docker.io \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Agregar el usuario Jenkins al grupo Docker para usar el socket Docker
+RUN usermod -aG docker jenkins
+
+USER jenkins
+WORKDIR /var/jenkins_home
