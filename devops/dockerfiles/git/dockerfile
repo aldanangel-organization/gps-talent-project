@@ -7,7 +7,7 @@ RUN apk add --no-cache \
     ca-certificates
 
 # Crear usuario Jenkins
-RUN addgroup -S devops && adduser -S jenkins -G devops
+RUN addgroup --gid 994 -S devops && adduser --uid 1001 -S jenkins -G devops
 USER jenkins
 WORKDIR /home/jenkins
 
