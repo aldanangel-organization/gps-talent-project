@@ -1,0 +1,45 @@
+# Imagen base: Python 3.9 sobre Alpine
+FROM python:3.9-alpine
+
+# Configurar variables de entorno
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    PATH="/home/jenkins/.local/bin:$PATH"
+
+# Definir UID y GID para Jenkins (ajustables si es necesario)
+ARG JENKINS_UID=1000
+ARG JENKINS_GID=1000
+
+# Instalar dependencias adicionales del sistema
+RUN apk add --no-cache \
+    bash \
+    curl \
+    git \
+    zip \
+    unzip \
+    tar \
+    make \
+    gcc \
+    libc-dev \
+    libffi-dev \
+    openssl-dev \
+    shadow
+
+# Crear un enlace simbólico explícito para python3.9
+RUN ln -sf /usr/local/bin/python3.9 /usr/bin/python3 && \
+    ln -sf /usr/local/bin/pip3 /usr/bin/pip3
+
+# Verificar que Python 3.9 está disponible en el PATH
+RUN python3 --version && pip3 --version
+
+# Instalar AWS CLI y AWS SAM CLI
+RUN pip install --upgrade pip && \
+    pip install pytest
+
+# Crear grupo y usuario configurables
+RUN addgroup -g ${JENKINS_GID} jenkins && \
+    adduser -u ${JENKINS_UID} -G jenkins -s /bin/bash -D jenkins
+
+# Configurar el directorio de trabajo
+WORKDIR /app
+USER jenkins
