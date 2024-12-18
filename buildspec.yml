@@ -22,7 +22,15 @@ phases:
   post_build:
     commands:
       - ls -la
-      - sam deploy --template-file packaged.yaml --stack-name gps-talent-project --s3-bucket lambdasrepositoryfromcodepipeline --capabilities CAPABILITY_NAMED_IAM --region us-east-1 --no-confirm-changeset --force-upload
+      - echo "Desplegando con SAM..."
+      - sam deploy \
+        --template-file packaged.yaml \
+        --stack-name gps-talent-project \
+        --s3-bucket lambdasrepositoryfromcodepipeline \
+        --capabilities CAPABILITY_NAMED_IAM \
+        --region us-east-1 \
+        --force-upload \
+        --no-fail-on-empty-changeset
 artifacts:
   files:
     - packaged.yaml
