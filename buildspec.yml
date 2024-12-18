@@ -15,12 +15,6 @@ phases:
       - sam --version
       - python3 --version
       - pip3 --version
-
-      # Configurar el prefijo del bucket S3 usando CODEBUILD_BUILD_ID o CODEPIPELINE_EXECUTION_ID
-      - echo "Configurando prefijo para S3..."
-      - export BUILD_ID=$(echo $CODEBUILD_BUILD_ID | cut -d':' -f2 || echo "local-build")
-      - export S3_PATH="gps-talent-project/builds/${CODEPIPELINE_EXECUTION_ID:-$BUILD_ID}"
-
       # Configurar PYTHONPATH y ejecutar pruebas
       - export PYTHONPATH=$PYTHONPATH:$CODEBUILD_SRC_DIR
       - echo "Ejecutando pruebas unitarias con pytest..."
@@ -31,7 +25,12 @@ phases:
       - echo "Construyendo artefactos con SAM..."
       - sam build
       - echo "Empaquetando artefactos con SAM..."
-      - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline --s3-prefix $S3_PATH
+
+      # Configurar el prefijo del bucket S3 usando CODEBUILD_BUILD_ID o CODEPIPELINE_EXECUTION_ID
+      - echo "Configurando prefijo para S3..."
+      - export BUILD_ID=$(echo $CODEBUILD_BUILD_ID | cut -d':' -f2 || echo "local-build")
+      - export S3_PATH="gps-talent-project/builds/${CODEPIPELINE_EXECUTION_ID:-$BUILD_ID}"
+      - eval "sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline --s3-prefix $S3_PATH"
 
   post_build:
     commands:
