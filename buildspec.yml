@@ -8,26 +8,40 @@ phases:
       - echo "Instalando dependencias..."
       - pip install --upgrade pip
       - pip install pytest pytest-cov
+
   pre_build:
     commands:
+      - echo "Verificando versiones..."
       - sam --version
       - python3 --version
       - pip3 --version
 
-      - export BUILD_ID=$(echo $CODEBUILD_BUILD_ID | cut -d':' -f2)
-      - export S3_PATH="gps-talent-project/$BUILD_ID"
+      # Configurar el prefijo del bucket S3 usando CODEBUILD_BUILD_ID o CODEPIPELINE_EXECUTION_ID
+      - echo "Configurando prefijo para S3..."
+      - export BUILD_ID=$(echo $CODEBUILD_BUILD_ID | cut -d':' -f2 || echo "local-build")
+      - export S3_PATH="gps-talent-project/builds/${CODEPIPELINE_EXECUTION_ID:-$BUILD_ID}"
+      - echo "El prefijo S3 será: $S3_PATH"
+
+      # Configurar PYTHONPATH y ejecutar pruebas
       - export PYTHONPATH=$PYTHONPATH:$CODEBUILD_SRC_DIR
-      - export S3_PATH="gps-talent-project/$CODEPIPELINE_EXECUTION_ID"
+      - echo "Ejecutando pruebas unitarias con pytest..."
       - pytest tests/unit/ --cov=hello_world --cov-report=xml --cov-report=term-missing
+
   build:
     commands:
+      - echo "Construyendo artefactos con SAM..."
       - sam build
+      - echo "Empaquetando artefactos con SAM..."
       - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline --s3-prefix "$S3_PATH"
+
   post_build:
     commands:
+      - echo "Desplegando artefactos con SAM..."
+      - sam deploy --template-file packaged.yaml --stack-name gps-talent-project --s3-bucket lambdasrepositoryfromcodepipeline --capabilities CAPABILITY_NAMED_IAM --region us-east-1 --no-confirm-changeset --force-upload
+      - echo "Despliegue completado. Archivos generados:"
       - ls -la
       - cat packaged.yaml
-      - sam deploy --template-file packaged.yaml --stack-name gps-talent-project --s3-bucket lambdasrepositoryfromcodepipeline --capabilities CAPABILITY_NAMED_IAM --region us-east-1 --no-confirm-changeset --force-upload
+
 artifacts:
   files:
     - packaged.yaml
