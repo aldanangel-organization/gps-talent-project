@@ -31,7 +31,7 @@ phases:
       - echo "Construyendo artefactos con SAM..."
       - sam build
       - echo "Empaquetando artefactos con SAM..."
-      - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline --s3-prefix "$S3_PATH"
+      - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline --s3-prefix $S3_PATH
 
   post_build:
     commands:
