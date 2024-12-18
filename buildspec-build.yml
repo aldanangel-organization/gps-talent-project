@@ -1,5 +1,13 @@
 version: 0.2
+
 phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - python3 --version
+      - pip3 --version
+      - pip3 install --upgrade pip
   build:
     commands:
       - sam build
