@@ -20,7 +20,6 @@ phases:
       - echo "Configurando prefijo para S3..."
       - export BUILD_ID=$(echo $CODEBUILD_BUILD_ID | cut -d':' -f2 || echo "local-build")
       - export S3_PATH="gps-talent-project/builds/${CODEPIPELINE_EXECUTION_ID:-$BUILD_ID}"
-      - echo "El prefijo S3 será: $S3_PATH"
 
       # Configurar PYTHONPATH y ejecutar pruebas
       - export PYTHONPATH=$PYTHONPATH:$CODEBUILD_SRC_DIR
