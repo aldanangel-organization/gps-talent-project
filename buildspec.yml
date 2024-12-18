@@ -18,7 +18,7 @@ phases:
       - sam build
   post_build:
     commands:
-      - pytest --cov=src --cov-report=term-missing --cov-report=html --cov-report=lcov
+      - pytest tests/unit/ --cov=hello_world --cov-report=term-missing --cov-report=html --cov-report=lcov
 
       - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline
       - sam deploy --template-file packaged.yaml --stack-name gps-talent-project --capabilities CAPABILITY_NAMED_IAM --region us-east-1
