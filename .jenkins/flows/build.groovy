@@ -11,5 +11,8 @@ pipeline.execute(
     type: 'lambda',
     template: 'template.yaml',
     test_directory: 'tests/unit/',
-    version: '1.0.0'
+    version: '1.0.0',
+    bucket: 'lambdasrepository',
+    region: 'us-east-1',
+    file: 'packaged'
 )
