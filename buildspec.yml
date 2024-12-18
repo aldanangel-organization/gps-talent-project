@@ -14,11 +14,13 @@ phases:
       - python3 --version
       - pip3 --version
       - export PYTHONPATH=$PYTHONPATH:$CODEBUILD_SRC_DIR
+      - export BUILD_ID=$(echo $CODEBUILD_BUILD_ID | cut -d':' -f2) # Extraer número de build
+      - export S3_PATH="lambdasrepositoryfromcodepipeline/$BUILD_ID"
       - pytest tests/unit/ --cov=hello_world --cov-report=xml --cov-report=term-missing
   build:
     commands:
       - sam build
-      - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline/$CODEBUILD_BUILD_ID
+      - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline --s3-prefix "$S3_PATH"
   post_build:
     commands:
       - ls -la
