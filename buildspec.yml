@@ -1,6 +1,24 @@
 version: 0.2
+
 phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - pip install --upgrade pip
+  pre_build:
+    commands:
+      - sam --version
+      - aws --version
   build:
     commands:
       - sam build
-      - sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+  post_build:
+    commands:
+      - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline
+      - sam deploy --template-file packaged.yaml --stack-name gps-talent-project --capabilities CAPABILITY_IAM --region us-east-1
+artifacts:
+  files:
+    - packaged.yaml
+    - .aws-sam/**/*
+  discard-paths: no
