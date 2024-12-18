@@ -13,10 +13,8 @@ phases:
       - sam --version
       - python3 --version
       - pip3 --version
-
       - export BUILD_ID=$(echo $CODEBUILD_BUILD_ID | cut -d':' -f2)
       - export S3_PATH="gps-talent-project/$BUILD_ID"
-      - echo "S3 Path: $S3_PATH"
       - pytest tests/unit/ --cov=hello_world --cov-report=xml --cov-report=term-missing
   build:
     commands:
