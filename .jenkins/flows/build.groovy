@@ -10,5 +10,6 @@ pipeline.execute(
     repository: 'aws_dev',
     type: 'lambda',
     template: 'template.yaml',
-    test_directory: 'tests/unit/'
+    test_directory: 'tests/unit/',
+    version: '1.0.0'
 )
