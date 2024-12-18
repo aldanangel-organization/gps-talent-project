@@ -30,7 +30,7 @@ phases:
       - echo "Configurando prefijo para S3..."
       - export BUILD_ID=$(echo $CODEBUILD_BUILD_ID | cut -d':' -f2 || echo "local-build")
       - export S3_PATH="gps-talent-project/builds/${CODEPIPELINE_EXECUTION_ID:-$BUILD_ID}"
-      - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline --s3-prefix "$(S3_PATH)"
+      - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline --s3-prefix $(S3_PATH)
 
   post_build:
     commands:
