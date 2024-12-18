@@ -20,6 +20,7 @@ phases:
       - sam package --output-template-file packaged.yaml --s3-bucket lambdasrepositoryfromcodepipeline
   post_build:
     commands:
+      - ls -la
       - sam deploy --template-file packaged.yaml --stack-name gps-talent-project --s3-bucket lambdasrepositoryfromcodepipeline --capabilities CAPABILITY_NAMED_IAM --region us-east-1
 artifacts:
   files:
